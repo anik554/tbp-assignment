@@ -2,12 +2,15 @@
 import { ISearchData } from "@/interfaces/home-page-types";
 import { searchFlights } from "@/lib/services/searchFlightService";
 import { touristLocations } from "@/utils/data-utils";
-import moment from "moment";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import moment from "moment";
+import { useSearch } from "@/context/SearchContext";
+import toast from "react-hot-toast";
 
 const SearchBar = () => {
   const router = useRouter();
+  const { setSearchResult } = useSearch();
   const [searchData, setSearchData] = useState<ISearchData>({
     origin: "",
     destination: "",
@@ -83,14 +86,23 @@ const SearchBar = () => {
           infant: searchData.passenger.infant,
         },
       };
+
+      const query = new URLSearchParams({
+        origin: payload.origin,
+        destination: payload.destination,
+        departureDate: payload.departureDate,
+        returnDate: payload.returnDate,
+        adult: String(payload.passenger.adult),
+        children: String(payload.passenger.children),
+        infant: String(payload.passenger.infant),
+      }).toString();
+
       const response = await searchFlights(payload);
-      if (response) {
-        <div className="toast toast-top toast-end">
-          <div className="alert alert-info">
-            <span>Search data successfully</span>
-          </div>
-        </div>;
-        router.push(`/search?data=${response}`)
+      
+      if (response?.data.length > 0 && response.status_code === 200) {
+        setSearchResult(response.data);
+        toast.success(response.message);
+        router.push(`/search?${query}`);
       }
     } catch (error) {
       console.error(error);

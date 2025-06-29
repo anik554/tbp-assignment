@@ -2,7 +2,7 @@ import React from 'react';
 
 const Navbar: React.FC = () => {
   return (
-    <div className="navbar text-white bg-transparent absolute z-20 w-9/12">
+    <div className="navbar  bg-transparent absolute z-20 w-9/12">
       {/* Start */}
       <div className="navbar-start">
         <div className="dropdown">
