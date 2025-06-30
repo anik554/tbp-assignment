@@ -87,22 +87,14 @@ const SearchBar = () => {
         },
       };
 
-      const query = new URLSearchParams({
-        origin: payload.origin,
-        destination: payload.destination,
-        departureDate: payload.departureDate,
-        returnDate: payload.returnDate,
-        adult: String(payload.passenger.adult),
-        children: String(payload.passenger.children),
-        infant: String(payload.passenger.infant),
-      }).toString();
-
       const response = await searchFlights(payload);
+      
       
       if (response?.data.length > 0 && response.status_code === 200) {
         setSearchResult(response.data);
         toast.success(response.message);
-        router.push(`/search?${query}`);
+        localStorage.setItem("flightData",JSON.stringify(payload))
+        router.push(`/search`);
       }
     } catch (error) {
       console.error(error);
